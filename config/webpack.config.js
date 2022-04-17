@@ -746,6 +746,7 @@ module.exports = function (webpackEnv) {
               ...(!hasJsxRuntime && {
                 'react/react-in-jsx-scope': 'error',
               }),
+              "no-unused-expressions": "off",
             },
           },
         }),
