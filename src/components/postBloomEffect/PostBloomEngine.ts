@@ -1,5 +1,6 @@
 // @ts-ignore
-import { Camera, Post, Renderer, Transform, Vec2, Mesh, Box, Program } from "ogl";
+import { Camera, Post, Renderer, Transform, Vec2, Mesh } from "ogl";
+import { Model } from "../model/Model";
 import { blurFragment, brightPassFragment, compositeFragment } from "./shaders/bloomFragments";
 
 export interface Resolution {
@@ -25,8 +26,8 @@ export class PostBloomEngine {
         if (overlay && this.gl) {
             overlay.appendChild(this.gl.canvas);
             this.initCamera();
-            this.initScene();
             this.initPasses();
+            this.initScene();
         }
     }
 
@@ -82,8 +83,8 @@ export class PostBloomEngine {
 
     private initCamera(): void {
         this._camera = new Camera(this.gl, { fov: 35 });
-        this._camera.position.set(0, 1, 5);
-        this._camera.lookAt([0, 0, 0]);
+        this._camera.position.set(0, 1, 12);
+        this._camera.lookAt([0, 2, 0]);
     }
 
     private initPasses(): void {
@@ -99,7 +100,7 @@ export class PostBloomEngine {
         this._postBloom.addPass({
             fragment: brightPassFragment,
             uniforms: {
-                uThreshold: { value: 0.8 },
+                uThreshold: { value: 0.2 },
             },
         });
         // Add gaussian blur passes
@@ -129,36 +130,15 @@ export class PostBloomEngine {
             uniforms: {
                 uResolution: this._resolution,
                 tBloom: this._postBloom.uniform,
-                uBloomStrength: { value: 1.0 },
+                uBloomStrength: { value: 1.5 },
             },
         });
     }
 
     private initScene(): void {
-        this.gl.clearColor(0.0, 0.0, 0.1, 1);
+        this.gl.clearColor(0.0, 0.4, 1.0, 0.0);
         this.scene = new Transform(this.gl);
-        const geometry = new Box(this.gl);
-        const program = new Program(this.gl, {
-            vertex: /* glsl */ `
-                attribute vec3 position;
-                attribute vec2 uv;
-                uniform mat4 modelViewMatrix;
-                uniform mat4 projectionMatrix;
-                varying vec2 vUv;
-                void main() {
-                    vUv = uv;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
-                }
-            `,
-            fragment: /* glsl */ `
-                precision highp float;
-                varying vec2 vUv;
-                void main() {
-                gl_FragColor = vec4(vUv, 1.0, 1.0);
-                }
-            `,
-        });
-        this._mesh = new Mesh(this.gl, { geometry, program });
+        this._mesh = new Model(this.gl).mesh;
         this._mesh.setParent(this.scene);
     }
 };
