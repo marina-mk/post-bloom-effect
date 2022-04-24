@@ -10,7 +10,7 @@ export const Overlay3D = () => {
 
     const update = useCallback(() => {
         frameId.current = window.requestAnimationFrame(update);
-        engine.mesh.rotation.y -= 0.005;
+        engine.meshes.forEach((mesh) => mesh.rotation.y -= 0.005);
         engine.render();
     }, []);
 

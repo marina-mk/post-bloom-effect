@@ -1,6 +1,7 @@
 // @ts-ignore
 import { Camera, Post, Renderer, Transform, Vec2, Mesh } from "ogl";
-import { Model } from "../model/Model";
+import { LogoModel } from "../model/LogoModel";
+import { TextModel } from "../model/TextModel";
 import { blurFragment, brightPassFragment, compositeFragment } from "./shaders/bloomFragments";
 
 export interface Resolution {
@@ -12,7 +13,7 @@ export class PostBloomEngine {
     private gl: WebGL2RenderingContext;
     private scene: Transform;
     private _camera: Camera;
-    private _mesh: Mesh;
+    private _meshes: Mesh[] = [];
     private _postComposite: Post;
     private _postBloom: Post;
     private compositePass: any;
@@ -39,8 +40,8 @@ export class PostBloomEngine {
         return this._camera;
     }
 
-    public get mesh(): Mesh {
-        return this._mesh;
+    public get meshes(): Mesh[] {
+        return this._meshes;
     }
 
     public get postComposite() {
@@ -83,8 +84,8 @@ export class PostBloomEngine {
 
     private initCamera(): void {
         this._camera = new Camera(this.gl, { fov: 35 });
-        this._camera.position.set(0, 1, 12);
-        this._camera.lookAt([0, 2, 0]);
+        this._camera.position.set(0, 0, 7);
+        this._camera.lookAt([0, 0, 0]);
     }
 
     private initPasses(): void {
@@ -138,7 +139,11 @@ export class PostBloomEngine {
     private initScene(): void {
         this.gl.clearColor(0.0, 0.4, 1.0, 0.0);
         this.scene = new Transform(this.gl);
-        this._mesh = new Model(this.gl).mesh;
-        this._mesh.setParent(this.scene);
+        this._meshes = [
+            new TextModel(this.gl).mesh,
+            new LogoModel(this.gl).mesh,
+        ];
+
+        this._meshes.forEach((mesh) => mesh.setParent(this.scene));
     }
 };
