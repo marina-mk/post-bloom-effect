@@ -137,7 +137,7 @@ export class PostBloomEngine {
     }
 
     private initScene(): void {
-        this.gl.clearColor(0.0, 0.4, 1.0, 0.0);
+        this.gl.clearColor(0.0, 0.3, 2.0, 0.0);
         this.scene = new Transform(this.gl);
         this._meshes = [
             new TextModel(this.gl).mesh,
