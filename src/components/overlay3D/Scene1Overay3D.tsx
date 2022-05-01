@@ -1,12 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useRef } from "react";
+import { EvoTextModel } from "../model/evoText/EvoTextModel";
 import { PostBloomEngine } from "../postBloomEffect/PostBloomEngine";
 import './Overlay3D.pcss';
 
-export const Overlay3D = () => {
+const cameraPosition: [number, number, number] = [0, 0, 4];
+const cameraLookAt: [number, number, number] = [-0.5, 0.7, 0];
+const bloomColor:[number, number, number, number] = [0.0, 0.3, 2.0, 0.0];
+
+export const Scene1Overlay3D = () => {
     const frameId = useRef<number>();
     const overlayRef = useRef<HTMLDivElement>(null);
     let engine: PostBloomEngine;
+
+    const init = () => {
+        engine = new PostBloomEngine(
+            overlayRef.current,
+            cameraPosition,
+            cameraLookAt,
+            bloomColor,
+        );
+        const meshes = [new EvoTextModel(engine.gl).mesh];
+        engine.initScene(meshes);
+        resize();
+    };
 
     const update = useCallback(() => {
         frameId.current = window.requestAnimationFrame(update);
@@ -25,8 +42,7 @@ export const Overlay3D = () => {
     };
 
     useEffect(() => {
-        engine = new PostBloomEngine(overlayRef.current);
-        resize();
+        init();
 
         if (!frameId.current) {
             frameId.current = requestAnimationFrame(update);

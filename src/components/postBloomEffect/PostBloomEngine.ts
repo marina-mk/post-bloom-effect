@@ -1,6 +1,5 @@
 // @ts-ignore
 import { Camera, Post, Renderer, Transform, Vec2, Mesh } from "ogl";
-import { EvoTextModel } from "../model/EvoTextModel";
 import { blurFragment, brightPassFragment, compositeFragment } from "./shaders/bloomFragments";
 
 export interface Resolution {
@@ -9,8 +8,8 @@ export interface Resolution {
 
 export class PostBloomEngine {
     private _renderer: Renderer;
-    private gl: WebGL2RenderingContext;
-    private scene: Transform;
+    private _gl: WebGL2RenderingContext;
+    private _scene: Transform;
     private _camera: Camera;
     private _meshes: Mesh[] = [];
     private _postComposite: Post;
@@ -19,16 +18,24 @@ export class PostBloomEngine {
     private _resolution?: Resolution;
     private _bloomResolution?: Resolution;
 
-    public constructor(overlay: HTMLDivElement | null) {
+    public constructor(
+        private overlay: HTMLDivElement | null,
+        private cameraPosition: [number, number, number],
+        private cameraLookAt: [number, number, number],
+        private bloomColor: [number, number, number, number],
+    ) {
         this._renderer = new Renderer({ dpr: 2, alpha: true });
-        this.gl = this._renderer.gl as WebGL2RenderingContext;
+        this._gl = this._renderer.gl as WebGL2RenderingContext;
 
-        if (overlay && this.gl) {
-            overlay.appendChild(this.gl.canvas);
+        if (this.overlay && this._gl) {
+            this.overlay.appendChild(this._gl.canvas);
             this.initCamera();
             this.initPasses();
-            this.initScene();
         }
+    }
+
+    public get gl(): WebGL2RenderingContext {
+        return this._gl;
     }
 
     public get renderer(): Renderer {
@@ -65,7 +72,7 @@ export class PostBloomEngine {
         // `targetOnly` prevents post from rendering to the canvas
         this._postComposite.targetOnly = true;
         // This renders the scene to postComposite.uniform.value
-        this._postComposite.render({ scene: this.scene, camera: this._camera });
+        this._postComposite.render({ scene: this._scene, camera: this._camera });
 
         // This render the bloom effect's bright and blur passes to postBloom.fbo.read
         // Passing in a `texture` argument avoids the post initially rendering the scene
@@ -82,16 +89,16 @@ export class PostBloomEngine {
     }
 
     private initCamera(): void {
-        this._camera = new Camera(this.gl, { fov: 35 });
-        this._camera.position.set(0, 0, 4);
-        this._camera.lookAt([-0.5, 0.7, 0]);
+        this._camera = new Camera(this._gl, { fov: 35 });
+        this._camera.position.set(...this.cameraPosition);
+        this._camera.lookAt(this.cameraLookAt);
     }
 
     private initPasses(): void {
         // Create composite post at full resolution, and bloom at reduced resolution
-        this._postComposite = new Post(this.gl);
+        this._postComposite = new Post(this._gl);
         // `targetOnly: true` prevents post from rendering to canvas
-        this._postBloom = new Post(this.gl, { dpr: 0.5, targetOnly: true });
+        this._postBloom = new Post(this._gl, { dpr: 0.5, targetOnly: true });
         // Create uniforms for passes
         this._resolution = { value: new Vec2() };
         this._bloomResolution = { value: new Vec2() };
@@ -135,13 +142,10 @@ export class PostBloomEngine {
         });
     }
 
-    private initScene(): void {
-        this.gl.clearColor(0.0, 0.3, 2.0, 0.0);
-        this.scene = new Transform(this.gl);
-        this._meshes = [
-            new EvoTextModel(this.gl).mesh,
-        ];
-
-        this._meshes.forEach((mesh) => mesh.setParent(this.scene));
+    public initScene(meshes: Mesh[]): void {
+        this._gl.clearColor(...this.bloomColor);
+        this._scene = new Transform(this._gl);
+        this._meshes = meshes;
+        this._meshes.forEach((mesh) => mesh.setParent(this._scene));
     }
 };
