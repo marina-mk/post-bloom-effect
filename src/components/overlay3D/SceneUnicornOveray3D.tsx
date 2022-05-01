@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useRef } from "react";
-import { EvoTextModel } from "../model/evoText/EvoTextModel";
+import { UnicornModel } from "../model/unicorn/UnicornModel";
 import { PostBloomEngine } from "../postBloomEffect/PostBloomEngine";
-import './Overlay3D.pcss';
+import './SceneOverlay3D.pcss';
 
-const cameraPosition: [number, number, number] = [0, 0, 4];
-const cameraLookAt: [number, number, number] = [-0.5, 0.7, 0];
+const cameraPosition: [number, number, number] = [0, 0, 10.5];
+const cameraLookAt: [number, number, number] = [-1.5, 3.3, 0];
 const bloomColor:[number, number, number, number] = [0.0, 0.3, 2.0, 0.0];
 
-export const Scene1Overlay3D = () => {
+export const SceneUnicornOverlay3D = () => {
     const frameId = useRef<number>();
     const overlayRef = useRef<HTMLDivElement>(null);
     let engine: PostBloomEngine;
@@ -20,8 +20,8 @@ export const Scene1Overlay3D = () => {
             cameraLookAt,
             bloomColor,
         );
-        const meshes = [new EvoTextModel(engine.gl).mesh];
-        engine.initScene(meshes);
+        const mesh = [new UnicornModel(engine.gl).mesh];
+        engine.initScene(mesh);
         resize();
     };
 
