@@ -15,7 +15,7 @@ export const Overlay3D = () => {
     }, []);
 
     const resize = () => {
-        const { innerWidth: width, innerHeight: height } = window;
+        const { clientWidth: width, clientHeight: height } = overlayRef.current;
         engine.renderer.setSize(width, height);
         engine.camera.perspective({ aspect: width / height });
         engine.postComposite.resize();
