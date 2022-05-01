@@ -8,7 +8,7 @@ import { Model } from "../types";
 export class UnicornModel implements Model {
     private _mesh: Mesh;
     private geometryData: number[] = model.data.attributes.position.array;
-    private readonly color = [0.4, 0.5, 1.0, 1.0];
+    private readonly color = [1.0, 0.4, 1.0, 1.0];
 
     public constructor(private gl: WebGL2RenderingContext) {
         const geometry = new Geometry(this.gl, {

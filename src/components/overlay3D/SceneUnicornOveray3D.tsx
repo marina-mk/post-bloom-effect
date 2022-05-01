@@ -6,7 +6,7 @@ import './SceneOverlay3D.pcss';
 
 const cameraPosition: [number, number, number] = [0, 0, 10.5];
 const cameraLookAt: [number, number, number] = [-1.5, 3.3, 0];
-const bloomColor:[number, number, number, number] = [0.0, 0.3, 2.0, 0.0];
+const bloomColor:[number, number, number, number] = [0.9, 0.1, 0.7, 0.0];
 
 export const SceneUnicornOverlay3D = () => {
     const frameId = useRef<number>();
@@ -57,5 +57,5 @@ export const SceneUnicornOverlay3D = () => {
         };
     }, [update, resize]);
 
-    return <div className="overlay3D" ref={overlayRef} />;
+    return <div className="overlay3D unicorn" ref={overlayRef} />;
 };

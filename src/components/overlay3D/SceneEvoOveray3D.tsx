@@ -57,5 +57,5 @@ export const SceneEvoOverlay3D = () => {
         };
     }, [update, resize]);
 
-    return <div className="overlay3D" ref={overlayRef} />;
+    return <div className="overlay3D evo" ref={overlayRef} />;
 };

@@ -11,4 +11,24 @@
         top: 0;
         left: 0;
     }
+
+    &.evo {
+        &::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(50% 100% at 50% 0%, rgba(1, 17, 26, 0.5) 0%, rgba(1, 17, 26, 0.5) 30%, rgba(1, 17, 26, 0.5) 50%, rgba(0, 15, 20, 0.9) 100%);
+        }
+    }
+
+    &.unicorn {
+        &::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(50% 100% at 50% 0%, rgba(1, 11, 26, 0.5) 0%, rgba(1, 11, 26, 0.5) 30%, rgba(1, 11, 26, 0.5) 50%, rgba(0, 4, 28, 0.9) 100%);
+        }
+    }
 }
