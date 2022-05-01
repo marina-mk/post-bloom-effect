@@ -1,7 +1,6 @@
 // @ts-ignore
 import { Camera, Post, Renderer, Transform, Vec2, Mesh } from "ogl";
-import { LogoModel } from "../model/LogoModel";
-import { TextModel } from "../model/TextModel";
+import { EvoTextModel } from "../model/EvoTextModel";
 import { blurFragment, brightPassFragment, compositeFragment } from "./shaders/bloomFragments";
 
 export interface Resolution {
@@ -84,8 +83,8 @@ export class PostBloomEngine {
 
     private initCamera(): void {
         this._camera = new Camera(this.gl, { fov: 35 });
-        this._camera.position.set(0, 0, 7);
-        this._camera.lookAt([0, 0, 0]);
+        this._camera.position.set(0, 0, 4);
+        this._camera.lookAt([-0.5, 0.7, 0]);
     }
 
     private initPasses(): void {
@@ -140,8 +139,7 @@ export class PostBloomEngine {
         this.gl.clearColor(0.0, 0.3, 2.0, 0.0);
         this.scene = new Transform(this.gl);
         this._meshes = [
-            new TextModel(this.gl).mesh,
-            new LogoModel(this.gl).mesh,
+            new EvoTextModel(this.gl).mesh,
         ];
 
         this._meshes.forEach((mesh) => mesh.setParent(this.scene));
