@@ -9,8 +9,10 @@ const cameraLookAt: [number, number, number] = [-1.5, 3.3, 0];
 const bloomColor:[number, number, number, number] = [0.9, 0.1, 0.7, 0.0];
 
 export const SceneUnicornOverlay3D = () => {
+    const isMounted = useRef(false);
     const frameId = useRef<number>();
     const overlayRef = useRef<HTMLDivElement>(null);
+
     let engine: PostBloomEngine;
 
     const init = () => {
@@ -32,7 +34,8 @@ export const SceneUnicornOverlay3D = () => {
     }, []);
 
     const resize = () => {
-        const { clientWidth: width, clientHeight: height } = overlayRef.current;
+        const width = isMounted.current ? overlayRef.current.clientWidth : window.innerWidth;
+        const height = isMounted.current ? overlayRef.current.clientHeight : window.innerHeight;
         engine.renderer.setSize(width, height);
         engine.camera.perspective({ aspect: width / height });
         engine.postComposite.resize();

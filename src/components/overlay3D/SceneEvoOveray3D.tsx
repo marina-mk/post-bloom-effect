@@ -9,8 +9,10 @@ const cameraLookAt: [number, number, number] = [-0.5, 0.7, 0];
 const bloomColor:[number, number, number, number] = [0.0, 0.3, 2.0, 0.0];
 
 export const SceneEvoOverlay3D = () => {
+    const isMounted = useRef(false);
     const frameId = useRef<number>();
     const overlayRef = useRef<HTMLDivElement>(null);
+
     let engine: PostBloomEngine;
 
     const init = () => {
@@ -23,6 +25,7 @@ export const SceneEvoOverlay3D = () => {
         const meshes = [new EvoTextModel(engine.gl).mesh];
         engine.initScene(meshes);
         resize();
+        isMounted.current = true;
     };
 
     const update = useCallback(() => {
@@ -32,7 +35,8 @@ export const SceneEvoOverlay3D = () => {
     }, []);
 
     const resize = () => {
-        const { clientWidth: width, clientHeight: height } = overlayRef.current;
+        const width = isMounted.current ? overlayRef.current.clientWidth : window.innerWidth;
+        const height = isMounted.current ? overlayRef.current.clientHeight : window.innerHeight;
         engine.renderer.setSize(width, height);
         engine.camera.perspective({ aspect: width / height });
         engine.postComposite.resize();
